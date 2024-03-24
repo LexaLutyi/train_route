@@ -9,6 +9,9 @@ class Route:
     def state(self, next_point:int):
         return self.xs[next_point], self.ys[next_point], self.ts[next_point]
     
+    def location(self, point:int):
+        return self.xs[point], self.ys[point]
+    
     def find_next_point(self, t, point:int = 0):
         while point < len(self.ts) and self.ts[point] < t:
             point += 1
@@ -19,25 +22,25 @@ class Route:
         return t < self.ts[0] or t > self.ts[-1]
     
     def rotation(self, point:int):
-        cur_state = self.state(point)
+        cur_state = self.location(point)
         prev_point = point
         while prev_point >= 0:
-            prev_state = self.state(prev_point)
+            prev_state = self.location(prev_point)
             if prev_state != cur_state:
                 break
             prev_point -= 1
         
         next_point = point
         while next_point < len(self.ts):
-            next_state = self.state(next_point)
+            next_state = self.location(next_point)
             if next_state != prev_state:
                 break
             next_point += 1
         if prev_state == next_state:
             return None
         
-        x0, y0, _ = prev_state
-        x1, y1, _ = next_state
+        x0, y0 = prev_state
+        x1, y1 = next_state
         dx, dy = x1 - x0, y1 - y0
         return 180 * math.atan2(dy, dx) / math.pi
         

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "train-route"
-version = "0.1.0"
+version = "0.1.1"
 description = ""
 authors = ["Samarin Aleksei <liotbiu1@gmail.com>"]
 readme = "README.md"
