@@ -1,4 +1,5 @@
-import math
+from math import cos, sin, radians, atan2, pi, degrees
+from typing import Literal
 
 class Route:
     def __init__(self, ts, xs, ys) -> None:
@@ -21,7 +22,7 @@ class Route:
         # return self.next_point == 0 or self.next_point >= len(self.ts)
         return t < self.ts[0] or t > self.ts[-1]
     
-    def rotation(self, point:int):
+    def segment(self, point:int):
         cur_state = self.location(point)
         prev_point = point
         while prev_point >= 0:
@@ -38,13 +39,26 @@ class Route:
             next_point += 1
         if prev_state == next_state:
             return None
-        
+        return prev_state, next_state
+    def plane_rotation(self, point):
+        prev_state, next_state = self.segment(point)
         x0, y0 = prev_state
         x1, y1 = next_state
         dx, dy = x1 - x0, y1 - y0
-        return 180 * math.atan2(dy, dx) / math.pi
-        
+        return degrees(atan2(dy, dx))
     
+    def spheric_rotation(self, point:int):
+        "assumes x, y is latitude, longitude"
+        prev_state, next_state = self.segment(point)
+        lat1, lon1 = [radians(phi) for phi in prev_state]
+        lat2, lon2 = [radians(phi) for phi in next_state]
+        dLon = lon2 - lon1
+        x = sin(dLon) * cos(lat2)
+        y = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(dLon)
+        initial_bearing = atan2(x, y)
+        initial_bearing_degrees = degrees(initial_bearing)
+        return initial_bearing_degrees
+
 class Train():
     def __init__(self, route:Route) -> None:
         self.route = route
@@ -61,7 +75,7 @@ class Train():
     def is_outside_route(self):
         return self.route.is_outside(self.t)
 
-    def state(self, t) -> None:
+    def state(self, t, *, rotation:Literal['plane', 'spheric'] = 'plane') -> None:
         "train[t] = f(train[t - 1], t)"
 
         if t < self.t:
@@ -81,7 +95,11 @@ class Train():
         
         x = delta * (next_x - old_x) + old_x
         y = delta * (next_y - old_y) + old_y
-        return x, y, self.route.rotation(self.next_point)
+        if rotation == 'plane':
+            phi = self.route.plane_rotation(self.next_point)
+        else:
+            phi = self.route.spheric_rotation(self.next_point)
+        return x, y, phi
 
 def to_geo_feature(lng, lat, rotation):
     return {
