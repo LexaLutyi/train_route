@@ -1,14 +1,12 @@
 [tool.poetry]
 name = "train-route"
-version = "0.2.0"
+version = "0.2.1"
 description = ""
 authors = ["Samarin Aleksei <liotbiu1@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-pandas = "^2.2.1"
-numpy = "^1.26.4"
+python = "^3.9"
 
 
 [build-system]
