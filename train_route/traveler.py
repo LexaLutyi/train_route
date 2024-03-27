@@ -1,5 +1,6 @@
 from typing import List
 import math
+from rotation import spheric_rotation
 
 def cumsum(xs:list):
     cs = xs.copy()
@@ -43,16 +44,21 @@ class Segment:
         "distance from starting point"
         self.distance = self.ds[-1]
 
-    def state(self, index, delta):
+    def state(self, index, delta, default_rotation = 0.):
         if len(self.xs) > 1:
             x0, y0 = self.xs[index - 1], self.ys[index - 1]
             x1, y1 = self.xs[index], self.ys[index]
             return {
                 'x': x0 + (x1 - x0) * delta,
                 'y': y0 + (y1 - y0) * delta,
+                'rotation': spheric_rotation(x0, y0, x1, y1)
             }
         else:
-            return {'x': self.xs[0], 'y': self.ys[0]}
+            return {
+                'x': self.xs[0], 
+                'y': self.ys[0],
+                'rotation': default_rotation
+            }
     
     def to_dict(self):
         return {
@@ -101,6 +107,7 @@ class ScheduledPath:
         return self.path.state(self.segment_index)
     
     def reset_path_traveler(self):
+        self.rotation = 0.
         self.path_traveler = OptimizedTraveler(self.path.ts)
         self.segment_index:int = 0
 
@@ -130,7 +137,9 @@ class ScheduledPath:
                 print(self.start, t, delta, delta_distance, self.segment().distance, sep='\n')
                 raise
             index, delta = segment_position
-        return self.segment().state(index, delta)
+        state = self.segment().state(index, delta, default_rotation=self.rotation)
+        self.rotation = state['rotation']
+        return state
     
     def to_dict(self):
         return {
