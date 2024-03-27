@@ -1,6 +1,6 @@
 from typing import List
 import math
-from rotation import spheric_rotation
+from .rotation import spheric_rotation
 
 def cumsum(xs:list):
     cs = xs.copy()
