@@ -48,10 +48,11 @@ class Segment:
         if len(self.xs) > 1:
             x0, y0 = self.xs[index - 1], self.ys[index - 1]
             x1, y1 = self.xs[index], self.ys[index]
+            phi = spheric_rotation(x0, y0, x1, y1)
             return {
                 'x': x0 + (x1 - x0) * delta,
                 'y': y0 + (y1 - y0) * delta,
-                'rotation': spheric_rotation(x0, y0, x1, y1)
+                'rotation': phi if not phi is None else default_rotation
             }
         else:
             return {
@@ -139,6 +140,7 @@ class ScheduledPath:
             index, delta = segment_position
         state = self.segment().state(index, delta, default_rotation=self.rotation)
         self.rotation = state['rotation']
+        assert not self.rotation is None
         return state
     
     def to_dict(self):
