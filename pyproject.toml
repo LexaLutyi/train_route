@@ -1,13 +1,20 @@
 [tool.poetry]
 name = "train-route"
-version = "0.4.2"
+version = "0.5.0"
 description = ""
 authors = ["Samarin Aleksei <liotbiu1@gmail.com>"]
 readme = "README.md"
+exclude = [
+    "examples"
+]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 
+
+[tool.poetry.group.dev.dependencies]
+matplotlib = {version = "^3.8.3", python = "^3.9"}
+tqdm = "^4.66.2"
 
 [build-system]
 requires = ["poetry-core"]
