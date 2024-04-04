@@ -118,7 +118,7 @@ class RelativePath:
         end_position = self.state(d1)
         x0, y0 = start_position['x'], start_position['y']
         x1, y1 = end_position['x'], end_position['y']
-        print(x0, y0, x1, y1)
+        # print(x0, y0, x1, y1)
         rotation = spheric_rotation(x0, y0, x1, y1)
         center_position['rotation'] = rotation
         center_position['x'] = (x0 + x1) / 2
