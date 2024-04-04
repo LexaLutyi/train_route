@@ -102,14 +102,26 @@ class RelativePath:
         d1 = self.distances[idx + 1]
         return d0 + (d1 - d0) * delta
 
-    def state(self, distance):
+    def state(self, distance, car_length = None):
         position = index_delta(self.distances, distance)
         if position is None:
             return None
         idx, delta = position
         segment = self.segments[idx]
         segment_distance = segment.distance * delta
-        return segment.state(segment_distance)
+        center_position = segment.state(segment_distance)
+        if car_length is None:
+            return center_position
+        d0 = max(0, distance - car_length / 2)
+        d1 = min(self.distance, distance + car_length / 2)
+        start_position = self.state(d0)
+        end_position = self.state(d1)
+        x0, y0 = start_position['x'], start_position['y']
+        x1, y1 = end_position['x'], end_position['y']
+        print(x0, y0, x1, y1)
+        rotation = spheric_rotation(x0, y0, x1, y1)
+        center_position['rotation'] = rotation
+        return center_position
     
     def to_dict(self):
         return {
@@ -135,7 +147,7 @@ class ScheduledPath:
         else:
             return None
         
-    def chain_state(self, t, distance_lags = [0]):
+    def chain_state(self, t, distance_lags = [0], car_length = None):
         if isinstance(self.start, datetime):
             relative_t = (t - self.start).total_seconds()
         else:
@@ -144,7 +156,7 @@ class ScheduledPath:
         if distance is None:
             return None
         
-        return [self.path.state(distance - l) for l in distance_lags if distance - l >= 0]
+        return [self.path.state(distance - l, car_length) for l in distance_lags if distance - l >= 0]
 
     def to_dict(self):
         return {
