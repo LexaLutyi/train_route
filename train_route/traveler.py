@@ -116,11 +116,12 @@ class RelativePath:
         d1 = min(self.distance, distance + car_length / 2)
         start_position = self.state(d0)
         end_position = self.state(d1)
+        if start_position == end_position:
+            # something strange
+            return center_position
         x0, y0 = start_position['x'], start_position['y']
         x1, y1 = end_position['x'], end_position['y']
-        # print(x0, y0, x1, y1)
-        rotation = spheric_rotation(x0, y0, x1, y1)
-        center_position['rotation'] = rotation
+        center_position['rotation'] = spheric_rotation(x0, y0, x1, y1)
         center_position['x'] = (x0 + x1) / 2
         center_position['y'] = (y0 + y1) / 2
         return center_position
