@@ -121,6 +121,8 @@ class RelativePath:
         print(x0, y0, x1, y1)
         rotation = spheric_rotation(x0, y0, x1, y1)
         center_position['rotation'] = rotation
+        center_position['x'] = (x0 + x1) / 2
+        center_position['y'] = (y0 + y1) / 2
         return center_position
     
     def to_dict(self):

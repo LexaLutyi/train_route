@@ -36,4 +36,4 @@ def test_path():
     assert path.state(5, 4) == {'x': 5, 'y': 0, 'rotation': rot(3, 0, 7, 0)}
     assert path.state(15, 4) == {'x': 10, 'y': 5, 'rotation': rot(10, 3, 10, 7)}
     # turning
-    assert path.state(10, 4) == {'x': 10, 'y': 0, 'rotation': rot(8, 0, 10, 2)}
+    assert path.state(10, 4) == {'x': 9, 'y': 1, 'rotation': rot(8, 0, 10, 2)}
